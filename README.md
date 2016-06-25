@@ -1,5 +1,7 @@
 ## Open Board Viewer
 
+[![Join the chat at https://gitter.im/pafmaf/OpenBoardView](https://badges.gitter.im/pafmaf/OpenBoardView.svg)](https://gitter.im/pafmaf/OpenBoardView?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Software for viewing .brd files, intended as a drop-in replacement for the
 "Test_Link" software.
 
