@@ -12,14 +12,29 @@ set(SOURCES
 	NetList.cpp
 	PartList.cpp
 
-	imgui_impl_dx9.cpp
-	platform_win32.cpp)
+	imgui_impl_glfw.cpp
+)
+
+# Add platform specific sources
+if(WIN32)
+	SET(SOURCES ${SOURCES}
+		platform_win32.cpp
+	)
+elseif(APPLE)
+	SET(SOURCES ${SOURCES}
+		platform_osx.mm
+	)
+elseif(UNIX AND NOT APPLE)
+	SET(SOURCES ${SOURCES}
+		platform_unix.cpp
+	)
+endif()
 
 ## Add main target
 add_executable(${PROJECT_NAME}
-	WIN32
+	WIN32 MACOSX_BUNDLE
 	${SOURCES}
-	${ASSETS})
+	${ICON})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
 	${LIBS}
@@ -31,6 +46,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 	${INCLUDE_DIRS}
 )
 
+target_compile_options(${PROJECT_NAME} PRIVATE ${GTK3_CFLAGS_OTHER})
+
 set_target_properties(${PROJECT_NAME} PROPERTIES
 		CXX_STANDARD 11       # Use C++11
 )
@@ -39,6 +56,19 @@ if (MSVC)
 	target_compile_definitions(${PROJECT_NAME} PRIVATE
 		-D_CRT_SECURE_NO_WARNINGS
 		-D_UNICODE -DUNICODE)
+
+	# Tell MSVC to use main instead of WinMain for Windows subsystem executables
+	set_target_properties(${PROJECT_NAME} PROPERTIES
+		LINK_FLAGS "/subsystem:windows /ENTRY:mainCRTStartup")
+elseif(APPLE)
+	# Help CPack build the bundle
+	set_target_properties(${PROJECT_NAME} PROPERTIES
+		RESOURCE glfw.icns
+		MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME}
+		MACOSX_BUNDLE_SHORT_VERSION_STRING "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}"
+		MACOSX_BUNDLE_LONG_VERSION_STRING ${CPACK_PACKAGE_VERSION}
+		MACOSX_BUNDLE_ICON_FILE "brd.icns"
+		MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/MacOSXBundleInfo.plist.in")
 endif()
 
 # Warnings
@@ -49,15 +79,21 @@ option(WARNINGS_ARE_ERRORS "Compile time warnings are treated as errors."
 if(SHOW_WARNINGS STREQUAL "all")
 	if(MSVC)
 		set(WARN_FLAGS "-W4")
+	else()
+		set(WARN_FLAGS "-Wall")
 	endif()
 elseif(SHOW_WARNINGS STREQUAL "all_extra")
 	if(MSVC)
 		set(WARN_FLAGS "-Wall")
+	else()
+		set(WARN_FLAGS "-Wall -Wextra")
 	endif()
 endif()
 if(WARNINGS_ARE_ERRORS)
 	if(MSVC)
 		set(WARN_FLAGS ${WARN_FLAGS} "-WX")
+	else()
+		set(WARN_FLAGS ${WARN_FLAGS} "-Werror")
 	endif()
 endif()
 if(WARN_FLAGS)
