@@ -23,6 +23,7 @@ if(WIN32)
 elseif(APPLE)
 	SET(SOURCES ${SOURCES}
 		platform_osx.mm
+		platform_unix.cpp
 	)
 elseif(UNIX AND NOT APPLE)
 	SET(SOURCES ${SOURCES}
@@ -62,12 +63,16 @@ if (MSVC)
 		LINK_FLAGS "/subsystem:windows /ENTRY:mainCRTStartup")
 elseif(APPLE)
 	# Help CPack build the bundle
+	# Copying the icon file into *.app/Contents/Resources/
+	set_source_files_properties(${ICON} PROPERTIES
+		MACOSX_PACKAGE_LOCATION "Resources")
+
+	# Setting up Info.plist contents
 	set_target_properties(${PROJECT_NAME} PROPERTIES
-		RESOURCE glfw.icns
 		MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME}
 		MACOSX_BUNDLE_SHORT_VERSION_STRING "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}"
-		MACOSX_BUNDLE_LONG_VERSION_STRING ${CPACK_PACKAGE_VERSION}
-		MACOSX_BUNDLE_ICON_FILE "brd.icns"
+		MACOSX_BUNDLE_LONG_VERSION_STRING ${PROJECT_VERSION}
+		MACOSX_BUNDLE_ICON_FILE ${ICON_NAME}
 		MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/MacOSXBundleInfo.plist.in")
 endif()
 
@@ -100,5 +105,8 @@ if(WARN_FLAGS)
 	target_compile_options(${PROJECT_NAME} PRIVATE ${WARN_FLAGS})
 endif()
 
-# Inastll/packageing location
-install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${INSTALL_BIN_DIR})
+# Install / Packaging location
+install(TARGETS ${PROJECT_NAME}
+	BUNDLE DESTINATION ${CMAKE_INSTALL_PREFIX}
+	RUNTIME DESTINATION ${INSTALL_BIN_DIR}
+)

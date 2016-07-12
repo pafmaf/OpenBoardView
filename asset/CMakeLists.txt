@@ -7,9 +7,9 @@ if (MSVC)
 	set(ICON "${CMAKE_CURRENT_SOURCE_DIR}/OpenBoardView.rc" PARENT_SCOPE)
 elseif(APPLE)
 	# Used for app bundle
-	set(ICON "${CMAKE_CURRENT_SOURCE_DIR}/brd.icns" PARENT_SCOPE)
-	set_source_files_properties("brd.icns" PROPERTIES
-		MAXOSX_PACKAGE_LOCATION "Resources")
+	set(ICON_NAME brd)	# icon name without .icns ending
+	set(ICON_NAME ${ICON_NAME} PARENT_SCOPE)
+	set(ICON "${CMAKE_CURRENT_SOURCE_DIR}/${ICON_NAME}.icns" PARENT_SCOPE)
 endif()
 
 # WiX Installer images

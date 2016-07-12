@@ -27,6 +27,11 @@ file(WRITE "${PROJECT_BINARY_DIR}/PROJECT_VERSION" "${PROJECT_VERSION}")
 ## Install locations
 # Allow user to easily discover the install prefix
 mark_as_advanced(CLEAR FORCE CMAKE_INSTALL_PREFIX)
+if (APPLE AND NOT CONFIGURED)
+	# Setting standard install path for MacOS users in case it hasn't
+	# changed by configuring (ccmake / cmake-gui)
+	set(CMAKE_INSTALL_PREFIX "~/Applications" CACHE PATH "Location to install bundle to." FORCE)
+endif()
 
 if(WIN32)
 	# Name the install directory; goes under CMAKE_INSTALL_PREFIX
