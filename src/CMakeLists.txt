@@ -35,7 +35,9 @@ endif()
 add_executable(${PROJECT_NAME}
 	WIN32 MACOSX_BUNDLE
 	${SOURCES}
-	${ICON})
+	${ICON}
+	${BUNDLE_ASSETS}
+)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
 	${LIBS}
@@ -63,8 +65,8 @@ if (MSVC)
 		LINK_FLAGS "/subsystem:windows /ENTRY:mainCRTStartup")
 elseif(APPLE)
 	# Help CPack build the bundle
-	# Copying the icon file into *.app/Contents/Resources/
-	set_source_files_properties(${ICON} PROPERTIES
+	# Copying the assets into *.app/Contents/Resources/
+	set_source_files_properties(${BUNDLE_ASSETS} PROPERTIES
 		MACOSX_PACKAGE_LOCATION "Resources")
 
 	# Setting up Info.plist contents

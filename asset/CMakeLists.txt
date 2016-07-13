@@ -10,6 +10,11 @@ elseif(APPLE)
 	set(ICON_NAME brd)	# icon name without .icns ending
 	set(ICON_NAME ${ICON_NAME} PARENT_SCOPE)
 	set(ICON "${CMAKE_CURRENT_SOURCE_DIR}/${ICON_NAME}.icns" PARENT_SCOPE)
+
+	# List of assets to be packed into the bundle. (*.app/Contents/Resources/)
+	set(BUNDLE_ASSETS
+		"${CMAKE_CURRENT_SOURCE_DIR}/${ICON_NAME}.icns"
+	PARENT_SCOPE)
 endif()
 
 # WiX Installer images
